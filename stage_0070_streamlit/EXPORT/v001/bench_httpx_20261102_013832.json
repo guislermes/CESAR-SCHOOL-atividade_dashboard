@@ -1,0 +1,118 @@
+{
+  "stamp": "20261102_013832",
+  "globals_gap": 0.35,
+  "globals_workers": 9,
+  "globals_retries": 2,
+  "rows": [
+    {
+      "gap_s": 0.05,
+      "workers": 3,
+      "n_urls": 9,
+      "wall_s": 2.063,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.306
+    },
+    {
+      "gap_s": 0.05,
+      "workers": 6,
+      "n_urls": 9,
+      "wall_s": 1.67,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.36
+    },
+    {
+      "gap_s": 0.05,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 1.755,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.463
+    },
+    {
+      "gap_s": 0.1,
+      "workers": 3,
+      "n_urls": 9,
+      "wall_s": 2.265,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.281
+    },
+    {
+      "gap_s": 0.1,
+      "workers": 6,
+      "n_urls": 9,
+      "wall_s": 3.949,
+      "ok": 9,
+      "http_429": 0,
+      "other_err": 0,
+      "bytes_ok": 409106,
+      "mean_ok_s": 0.998
+    },
+    {
+      "gap_s": 0.1,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 10.221,
+      "ok": 9,
+      "http_429": 0,
+      "other_err": 0,
+      "bytes_ok": 407436,
+      "mean_ok_s": 2.092
+    },
+    {
+      "gap_s": 0.15,
+      "workers": 3,
+      "n_urls": 9,
+      "wall_s": 8.509,
+      "ok": 9,
+      "http_429": 0,
+      "other_err": 0,
+      "bytes_ok": 411509,
+      "mean_ok_s": 2.296
+    },
+    {
+      "gap_s": 0.15,
+      "workers": 6,
+      "n_urls": 9,
+      "wall_s": 1.793,
+      "ok": 9,
+      "http_429": 0,
+      "other_err": 0,
+      "bytes_ok": 411509,
+      "mean_ok_s": 0.32
+    },
+    {
+      "gap_s": 0.15,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 1.803,
+      "ok": 9,
+      "http_429": 0,
+      "other_err": 0,
+      "bytes_ok": 411509,
+      "mean_ok_s": 0.371
+    }
+  ],
+  "best": {
+    "gap_s": 0.15,
+    "workers": 6,
+    "n_urls": 9,
+    "wall_s": 1.793,
+    "ok": 9,
+    "http_429": 0,
+    "other_err": 0,
+    "bytes_ok": 411509,
+    "mean_ok_s": 0.32
+  }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+    #root { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  /* Streamlit custom component protocol (sandbox bloqueia target=_top) */
+  function send(type, data) {
+    var msg = Object.assign({ isStreamlitMessage: true, type: type }, data);
+    window.parent.postMessage(msg, "*");
+  }
+
+  function ready() {
+    send("streamlit:componentReady", { apiVersion: 1 });
+  }
+
+  function setHeight(h) {
+    send("streamlit:setFrameHeight", { height: h });
+  }
+
+  function setValue(value) {
+    send("streamlit:setComponentValue", { value: value, dataType: "json" });
+  }
+
+  function bind(root) {
+    root.querySelectorAll(".zone-hit[data-zona], .zg[data-zona], a.zone-link[data-zona]").forEach(function (el) {
+      el.style.cursor = "pointer";
+      function fire(ev) {
+        if (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+        var zona = el.getAttribute("data-zona");
+        if (!zona && el.querySelector) {
+          var inner = el.querySelector("[data-zona]");
+          if (inner) zona = inner.getAttribute("data-zona");
+        }
+        if (!zona) return;
+        setValue({ action: "zone", zona: zona, page: 0, t: Date.now() });
+      }
+      el.addEventListener("click", fire);
+      el.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") fire(ev);
+      });
+    });
+  }
+
+  function onRender(event) {
+    if (!event.data || event.data.type !== "streamlit:render") return;
+    var args = event.data.args || {};
+    var root = document.getElementById("root");
+    root.innerHTML = args.html || "";
+    /* troca <a target=_top> por data-zona no g (sandbox mata top nav) */
+    root.querySelectorAll("a.zone-link").forEach(function (a) {
+      var zona = null;
+      try {
+        var u = new URL(a.getAttribute("href") || "", "http://local/");
+        zona = u.searchParams.get("zona");
+      } catch (e) {}
+      var g = a.querySelector("g.zg, g.zone-hit") || a;
+      if (zona) g.setAttribute("data-zona", zona);
+      g.classList.add("zone-hit");
+      /* unwrap: move children out of <a> so click hits g */
+      if (g.parentNode === a) {
+        a.parentNode.insertBefore(g, a);
+        a.remove();
+      }
+    });
+    bind(root);
+    setHeight(args.height || 640);
+  }
+
+  window.addEventListener("message", onRender);
+  ready();
+  setHeight(640);
+})();
+</script>
+</body>
+</html>

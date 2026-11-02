@@ -1,0 +1,136 @@
+/* Trânsito Recife v002 — mapa SVG self-contained, drawer, fullscreen feed */
+
+:root {
+  --bg-0: #f5f7fa;
+  --bg-1: #e4ecf5;
+  --text: #1e3c72;
+  --muted: #64748b;
+  --card: #ffffff;
+  --accent: #007bff;
+  --glow: #00d2ff;
+  --radius: 14px;
+  --shadow: 0 8px 28px rgba(30, 60, 114, 0.1);
+  --drawer-w: min(380px, 92vw);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Inter, "DM Sans", system-ui, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg-0) 0%, var(--bg-1) 100%);
+}
+
+.map-stage {
+  position: relative;
+  width: 100%;
+  min-height: 70vh;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: #e8f4f8;
+}
+
+.map-stage svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: top;
+}
+
+.zone-poly {
+  cursor: pointer;
+  transition: fill-opacity 0.2s ease, stroke-width 0.2s ease;
+  fill-opacity: 0.32;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.zone-poly:hover,
+.zone-poly.is-active {
+  fill-opacity: 0.55;
+  stroke-width: 3;
+  stroke: var(--accent);
+}
+
+.zone-label {
+  pointer-events: none;
+  font-size: 11px;
+  font-weight: 700;
+  fill: #0f172a;
+  opacity: 0.8;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--drawer-w);
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1rem 2rem;
+  overflow-y: auto;
+  z-index: 40;
+}
+
+.drawer h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.drawer .sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.camera-card {
+  background: var(--card);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.08);
+  margin-bottom: 12px;
+  transition: transform 0.15s ease;
+}
+
+.camera-card:hover {
+  transform: translateY(-2px);
+}
+
+.camera-card b {
+  color: #334155;
+  font-size: 13px;
+}
+
+.feed-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.feed-chrome h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
+  .drawer {
+    width: 100%;
+    height: 42vh;
+    top: auto;
+    bottom: 0;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+  }
+}

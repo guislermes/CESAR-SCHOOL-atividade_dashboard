@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recife por zonas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EEF3F2;--panel:#FFFFFF;--ink:#0F2A36;--mute:#5B7480;--line:#CFDCDD;--inland:#BFD0C6;--s1:#8AD3D4;--s2:#2F8AAE;--s3:#0C3A66;--idle:#E9F0EB;
+--c-centro:#C2503A;--c-norte:#2C7A9B;--c-noroeste:#5B8C3E;--c-oeste:#8A5DB0;--c-sudoeste:#D79A1E;--c-sul:#1F9E8A;--c-indeterminado:#7C8B93;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1B24;--panel:#112733;--ink:#E6F0F1;--mute:#8FA9B3;--line:#1F3B49;--inland:#0E2A2E;--s1:#2A8299;--s2:#10506C;--s3:#051624;--idle:#27434E;
+--c-centro:#E4735B;--c-norte:#4FAAD0;--c-noroeste:#86BA63;--c-oeste:#B18BD6;--c-sudoeste:#EBB546;--c-sul:#3CC4AE;--c-indeterminado:#8FA1AA}}
+:root[data-theme="dark"]{--bg:#0B1B24;--panel:#112733;--ink:#E6F0F1;--mute:#8FA9B3;--line:#1F3B49;--inland:#0E2A2E;--s1:#2A8299;--s2:#10506C;--s3:#051624;--idle:#27434E;
+--c-centro:#E4735B;--c-norte:#4FAAD0;--c-noroeste:#86BA63;--c-oeste:#B18BD6;--c-sudoeste:#EBB546;--c-sul:#3CC4AE;--c-indeterminado:#8FA1AA}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Instrument Sans",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:700;margin:0;letter-spacing:-.01em}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px}
+header{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.05}
+header p{margin:6px 0 0;color:var(--mute);max-width:46ch}
+.tools{display:flex;gap:8px}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+button:hover{border-color:var(--mute)}
+:focus-visible{outline:2px solid var(--c-norte);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:20px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.map{background:var(--inland);border-radius:22px;border:1px solid var(--line);position:relative;overflow:hidden}
+svg{display:block;width:100%;height:auto}
+.sea-txt{font:italic 500 15px Fraunces,serif;fill:#fff;opacity:.55}
+.zg{cursor:pointer;--top:var(--idle);--side:color-mix(in srgb,var(--idle) 58%,#000)}
+.zg.on{--top:var(--zc);--side:color-mix(in srgb,var(--zc) 48%,#000)}
+.zg:hover{--top:color-mix(in srgb,var(--zc) 28%,var(--idle))}
+.zg.on:hover{--top:var(--zc)}
+.side{fill:var(--side);stroke:var(--side);stroke-width:2;stroke-linejoin:round;transform:translateY(7px);transition:transform .3s,fill .3s}
+.zg.on .side{transform:translateY(15px)}
+.top{fill:var(--top);stroke:color-mix(in srgb,var(--top) 70%,#fff);stroke-width:1.5;stroke-linejoin:round;transition:fill .3s,transform .3s}
+.hl{fill:url(#hl);pointer-events:none;transition:transform .3s}
+.zg.on .top,.zg.on .hl{transform:translateY(-6px)}
+.zg:focus-visible .top{stroke:var(--ink);stroke-width:3}
+.lbl{font:700 15px Fraunces,serif;fill:var(--ink);pointer-events:none;text-anchor:middle;transition:transform .3s}
+.cnt{font:500 12px "Instrument Sans";fill:var(--mute);pointer-events:none;text-anchor:middle;transition:transform .3s}
+.lbl.on{fill:#fff;transform:translateY(-6px)}
+.cnt.on{fill:#ffffffd0;transform:translateY(-6px)}
+.note{position:absolute;left:14px;bottom:10px;font-size:12px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:8px;padding:7px 12px}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--zc)}
+.chip[aria-pressed=true]{background:var(--zc);border-color:var(--zc);color:#fff}
+.chip[aria-pressed=true] i{background:#fff}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;min-height:560px}
+.panel h2{font-size:26px}
+.sub{color:var(--mute);margin:4px 0 12px}
+.bairros{font-size:13px;color:var(--mute);margin:0 0 14px}
+input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:10px}
+ul{list-style:none;margin:0;padding:0;overflow:auto;max-height:430px;flex:1}
+li{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:start;padding:9px 4px;border-top:1px solid var(--line)}
+li i{width:8px;height:8px;border-radius:50%;margin-top:7px;background:var(--zc)}
+li b{font-weight:500;font-size:14px}
+li code{font:500 12px ui-monospace,monospace;color:var(--mute);margin-top:2px}
+.empty{color:var(--mute);padding:30px 0;text-align:center}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><div class="wrap">
+<header><div><h1>Recife por zonas</h1><p>Selecione uma ou mais regiões no mapa ou nos botões para listar as câmeras de cada uma.</p></div>
+<div class="tools"><button id="all">Todas</button><button id="none">Limpar</button></div></header>
+<div class="chips" id="chips"></div>
+<div class="grid">
+<div class="map"><svg viewBox="0 0 600 700" role="img" aria-label="Mapa esquemático das regiões de Recife">
+<defs>
+<radialGradient id="seaG" cx="580" cy="380" r="430" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:var(--s1)"/><stop offset=".42" style="stop-color:var(--s2)"/><stop offset="1" style="stop-color:var(--s3)"/></radialGradient>
+<linearGradient id="hl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+<filter id="b8" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="b14" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+<clipPath id="seaClip"><path id="seaC"/></clipPath>
+</defs>
+<rect width="600" height="700" fill="var(--inland)"/>
+<path id="sea" fill="url(#seaG)"/>
+<g clip-path="url(#seaClip)"><g id="glow" filter="url(#b14)" opacity=".65"></g></g>
+<text class="sea-txt" x="572" y="360" transform="rotate(90 572 360)">Oceano Atlântico</text>
+<g id="shadows" filter="url(#b8)" opacity=".38"></g>
+<g id="zones"></g><g id="labels"></g>
+</svg><div class="note">Esquema ilustrativo das RPAs, sem escala nem limites cartográficos.</div></div>
+<section class="panel" aria-live="polite"><h2 id="t"></h2><p class="sub" id="s"></p><p class="bairros" id="b"></p>
+<input id="q" type="search" placeholder="Buscar câmera ou id" aria-label="Buscar câmera"><ul id="l"></ul></section>
+</div></div>
+<script>
+const DATA={"centro":{"AV_AG_MAGALHAES_X_AV_GAL_JOAQUIM_INACIO_SEM_069_SENT_OLINDA":161,"AGAMENON_MAGALHAES_X_JOAQUIM_INACIO_GIRO":249,"AGAMENON_MAGALHAES_X_PAISSANDU_SENT_PINA":174,"AV_NORTE_X_CRUZ_CABUGA":187,"CAIS_DE_SANTA_RITA_NOVOTEL":196,"AV_RIO_BRANCO_MARCO_ZERO":197,"AV_ALFREDO_LISBOA_MARCO_ZERO":263,"RUA_DR_JOSE_MARIANO_X_RUA_DOS_COELHOS":186,"RUA_JOAO_FERNANDES_VIEIRA":209,"RUA_JOSE_DE_DE_ALENCAR_X_RUA_DO_GIRIQUITI_LOMB40":217,"RUA_DA_AURORA_PONTE_VELHA_LOMB41":218,"RUA_DA_AURORA_X_AV_CDE_DA_BOA_VISTA":266,"RUA_FREI_CASSIMIRO_X_RUA_TREZE_DE_MAIO":219,"AV_ENG_JOSE_ESTELITA_NOVO_VIARIO":220,"AV_CDE_DA_BOA_VISTA_X_RUA_SETE_DE_SETEMBRO_SEM_486":231,"AV_CONDE_DA_BOA_VISTA_X_SETE_DE_SETEMBRO_SENTIDO_GUARARAPES":248,"AV_CDE_DA_BOA_VISTA_EM_FRENTE_AO_SHOPPING_BOA_VISTA":274,"PREFEITURA_DO_RECIFE":262},"norte":{"AV_NORTE_MIGUEL_ARRAES_DE_ALENCAR_SEMAF_424_PROX_A_RUA_BUJARU":167,"AV_BEBERIBE_SANTA_CRUZ_FUTEBOL_CLUBE_SEM_307_SUBURBIO":176,"AV_BEBERIBE_SANTA_CRUZ_FUTEBOL_CLUBE_SEM_307_CENTRO":177,"AV_BEBERIBE_X_RUA_SAO_BENTO":185,"AV_NORTE_X_BR101":198,"PRACA_DA_CONVENCAO_BEBERIBE":201,"ESTRADA_DE_BELEM_X_ODORICO_MENDES":204,"AV_BEBERIBE_X_RUA_PROF_JERONIMO_GUEIROS":228,"AV_BEBERIBE_PROXIMO_AO_ARRUDA":235,"ESTRADA_VELHA_DE_AGUA_FRIA_SEMAFORO_306":242,"AV_PROF_JOSE_DOS_ANJOS":251,"AV_NORTE_X_AV_PROF_JOSE_DOS_ANJOS":264},"noroeste":{"AV_AG_MAGALHAES_X_BANDEIRA_FILHO_SEMAFORO_173_SENTIDO_OLINDA":162,"AV_AG_MAGALHAES_X_BANDEIRA_FILHO_SEMAFORO_173_SENTIDO_ESPINHEIRO":250,"PRACA_DO_DERBY_SEMAROFORO_516":166,"RUA_GUILHERME_PINTO_SEM_432":168,"AV_NORTE_X_CONEGO_BARATA":194,"AV_NORTE_EM_FRENTE_AO_TERMINAL_DA_MACAXEIRA":195,"AV_DEZESSETE_DE_AGOSTO_X_ESTRADA_DAS_UBAIAS":205,"AV_17_DE_AGOSTO":212,"AV_17_DE_AGOSTO_EM_FRENTE_AO_NO_50":270,"AV_RUI_BARBOSA_X_SENADOR_ALBERTO_PAIVA":207,"RUA_DO_FUTURO_X_RUA_DR_MALAQUIAS":211,"AV_VER_OTACILIO_AZEVEDO_X_NOVA_DESCOBERTA":256,"AV_CONS_ROSA_E_SILVA_X_AV_SANTOS_DUMONT":260,"AV_CONSELHEIRO_ROSA_E_SILVA_X_RIA_DA_HORA":279,"AV_DA_RECUPERACAO_X_RUA_DOIS_IRMAOS":267,"AV_NORTE_MIGUEL_ARRAES_DE_ALENCAR_X_RUA_VASCO_DA_GAMA":278},"oeste":{"AV_ENG_ABDIAS_DE_CARVALHO_NO_441_SEM_272":160,"AV_ENG_ABDIAS_DE_CARVALHO_NO_441_SEM_271":230,"RUA_FALCAO_DE_LACERDA_X_RUA_PAPA_JOAO_XXIII_SEMAFORO_285_CENTRO":169,"RUA_FALCAO_DE_LACERDA_X_RUA_PAPA_JOAO_XXIII_SEMAFORO_285_SUBURBIO":182,"AV_LIBERDADE_SEMAFORO_440":170,"AV_ABDIAS_DE_CARVALHOS_X_AVENIDA_DO_FORTE":184,"AV_CAXANGA_X_RUA_RIBEIRO_PESSOA":200,"AV_CAXANGA_SEMAFORO_609":247,"ABDIAS_DE_CARVALHO_ESTACIO":236,"RUA_REAL_DA_TORRE_PROX_ENTRATA_DO_TUNEL_DA_ABOLICAO":237,"RUA_JOSE_OSORIO_X_RUA_REAL_DA_TORRE":253},"sudoeste":{"AV_RECIFE_SEM_336_SENT_AEROPORTO":164,"AV_RECIFE_SEM_617_SENT_UFPE":165,"AV_RECIFE_X_AV_TAPAJOS":226,"DR_JOSE_RUFINO_COLEGIO_VISAO_SENTIDO_CENTRO":173,"AV_DR_JOSE_RUFINO_SENTIDO_AV_RECIFE_COLEGIO_VISAO":180,"AV_DR_JOSE_RUFINO_X_R_DOMINGOS_TEUTONIO_CAM58":223,"AV_DR_JOSE_RUFINO_X_AV_ANTONIO_CARNEIRO":225,"AV_DR_JOSE_RUFINO_SENTIDO_CENTRO_SEMAFORO_044":246,"AV_ABIDIAS_X_ESTRADA_DOS_REMEDIOS":189,"PONTE_MOTOCOLOMBO_AFOGADOS":191,"RUA_SAO_MIGUEL_X_RUA_MANOEL_ALBUQUERQUE":192,"RUA_SAO_MIGUEL_X_RUA_SANTOS_ARAUJO":193,"RUA_LONDRINA_X_RUA_SANTOS_ARAUJO_CAM45":216,"SAN_MARTIN_X_GOMES_TABORDA":206,"AV_ENG_ABDIAS_DE_CARVALHO_X_AV_GEN_SAN_MARTIN":255,"AV_GEN_MAC_ARTHUR_X_AV_SUL_CAM42":213,"AV_SAO_PAULO_TRES_CARNEIROS":257},"sul":{"HERCULANO_BANDEIRA_SEM_137":158,"DOMINGOS_FERREIRA_X_BRUNO_VELOSO_SEM_338":159,"AV_MASCARENHAS_DE_MORAES_SEMAF_531_SENTIDO_AEROPORTO":163,"AV_MARECHAL_MASCARENHAS_DE_MORAES_SEMAFORO_530_SENTIDO_AFOGADOS":234,"AV_VISC_DE_JEQUITINHONHA_SEMAFORO_151_PISTA_ESQ":175,"AV_VISC_DE_JEQUITINHONHA_SEMAFORO_151_PISTA_DIR":245,"RUA_VISCONDE_DE_JEQUITINHONHA_X_RUA_MARIO_DE_CASTRO_SEMAF_158":241,"ANTONIO_FALCAO_X_DOMINGOS_FERREIRA":190,"AV_PERNAMBUCO":199,"AV_PERNAMBUCO_UR1_IBURA_SEMAFORO_707":254,"RUA_DOM_JOAO_VI_X_RUA_PEDRO_PAES_MENDONCA":202,"AV_DES_JOSE_NEVES_X_RUA_BARAO_DE_SOUZA_LEAO":210,"AV_DES_JOSE_NEVES_SENT_CENTRO":238,"AV_DES_JOSE_NEVES_SENT_SUBURBIO":239,"AV_CONSELHEIRO_AGUIAR_RUA_BARAO_DE_SOUZA_LEAO":282,"RUA_RIBEIRO_DE_BRITO_X_RUA_PROF_JOAO_MEDEIROS":259,"RUA_PROF_JOAO_MEDEIROS_LOMB44":215,"DOMINGOS_FERREIRA_SEM_297_EXTRA_ESQUERDA":229,"AV_BOA_VIAGEM_X_POLO_PINA_FIXA":233,"RUA_EXPEDICIONARIO_FRANCISCO_VITORIANO_COHAB":261,"EMPRESARIAL_TRADE_CENTER_RIOMAR":265,"AV_ANTONIO_DE_GOES_SAD":273,"AV_DOIS_RIOS_SEMAFORO_561":275,"AEROPORTO_DESEMBARQUE":276,"AEROPORTO_EMBARQUE":277},"indeterminado":{"AV_MAL_JUAREZ_TAVORA_CAM59":224,"AV_GOV_AGAMENON_MAGALHAES_SENTIDO_OLINDA_SEMAFORO_049":171,"AV_GOV_AGAMENON_MAGALHAES_SENTIDO_BOA_VIAGEM_SEMAFORO_049":172,"AV_NORTE_MIGUEL_ARRAES_DE_ALENCAR_SEMAFORO_043_SENTIDO_SUBURBIO":178,"AV_NORTE_SEMAFORO_062":243,"AV_NORTE_SEMAFORO_081":244,"AV_MAURICIO_DE_NASSAU_X_RUA_PEREIRA_COUTINHO_FILHO":183,"AV_MAURICIO_DE_NASSAU_X_RUA_DR_JOAO_LACERDA":203,"AV_PRESIDENTE_DUTRA_X_SENADOR_KENNEDY":188,"AV_MONTEVIDEU":208,"AV_DOM_HELDER_CAMARA_LOMB43":214,"AV_DEZ_JULHO_X_RUA_CAMBOIM":227,"RUA_PROF_ARNALDO_CARNEIRO_LEAO_PROX_AO_HIPERBOMPRECO":232,"RUA_ARNALDO_CARNEIRO_LEAO_GIRO":252,"RIO_AVE_CORPORATE_CENTER_1":268,"RIO_AVE_CORPORATE_CENTER_2":269,"RUA_DO_ACRE":271,"AV_RECIFE_PROXIMO_AO_SEMAFORO_059":272,"AV_RECIFE_X_RUA_JEAN_EMILE_FAVRE":258,"AV_ENG_ABDIAS_DE_CARVALO_X_AV_JOSE_GONCALVES_DE_MEDEIROS":280,"AV_JOAO_DE_BARROS_X_RUA_48":281}};
+const Z={centro:{n:"Centro",rpa:"RPA 1",p:"300,200 380,215 450,170 505,235 490,310 400,320 340,290",l:[432,262],b:"Bairro do Recife, Boa Vista, Santo Amaro, Santo Antônio, São José, Soledade, Paissandu, Ilha do Leite, Coelhos, Cabanga"},
+norte:{n:"Norte",rpa:"RPA 2",p:"300,40 430,70 450,170 380,215 300,200 270,130",l:[370,130],b:"Arruda, Beberibe, Água Fria, Encruzilhada, Campo Grande, Hipódromo, Peixinhos, Rosarinho, Torreão, Cajueiro, Fundão"},
+noroeste:{n:"Noroeste",rpa:"RPA 3",p:"270,130 130,110 110,220 170,300 270,290 340,290 300,200",l:[205,205],b:"Graças, Derby, Espinheiro, Aflitos, Casa Forte, Casa Amarela, Macaxeira, Nova Descoberta, Tamarineira, Poço da Panela"},
+oeste:{n:"Oeste",rpa:"RPA 4",p:"170,300 270,290 340,290 400,320 380,370 300,420 190,430 80,390 100,330",l:[235,360],b:"Madalena, Torre, Prado, Cordeiro, Iputinga, Ilha do Retiro, Zumbi, Caxangá, Várzea, Cidade Universitária"},
+sudoeste:{n:"Sudoeste",rpa:"RPA 5",p:"190,430 300,420 380,370 385,460 410,570 340,640 220,600 150,510",l:[295,520],b:"Afogados, Areias, San Martin, Jardim São Paulo, Mustardinha, Tejipió, Curado, Jiquiá, Estância, Barro"},
+sul:{n:"Sul",rpa:"RPA 6",p:"400,320 490,310 520,400 545,520 565,640 470,665 410,570 385,460 380,370",l:[470,500],b:"Boa Viagem, Pina, Imbiribeira, Ibura, Brasília Teimosa, Ipsep, Jordão, Cohab"}};
+const IND={n:"Indeterminado",rpa:"Sem localização segura",b:""};
+const nm=k=>k.replace(/_/g," ").toLowerCase().replace(/\b(\w)/g,m=>m.toUpperCase()).replace(/\b(Av|Sem|Sent|Cam|Lomb|X|De|Da|Do|Dos|E)\b/g,m=>["Av","Sem","Sent","Cam","Lomb"].includes(m)?m+".":m.toLowerCase()==="x"?"×":m.toLowerCase());
+const ns="http://www.w3.org/2000/svg",sel=new Set(["sul"]);
+const $=id=>document.getElementById(id),chips=$("chips");
+const cnt=z=>Object.keys(DATA[z]||{}).length;
+const P=s=>s.split(" ").map(p=>p.split(",").map(Number));
+const rnd=(a,b)=>{const s=Math.sin(a[0]*12.9898+a[1]*78.233+b[0]*37.719+b[1]*4.581)*43758.5453;return s-Math.floor(s)-.5};
+function edge(a,b,amp){const f=a[0]<b[0]||(a[0]===b[0]&&a[1]<b[1]),p=f?a:b,q=f?b:a,dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1,m=Math.min(amp,L*.14);
+ const r=[[.25,rnd(p,q)],[.5,rnd(q,p)*1.2],[.75,rnd([p[1],p[0]],[q[1],q[0]])]].map(([t,o])=>[p[0]+dx*t-dy/L*o*m*2,p[1]+dy*t+dx/L*o*m*2]);return f?r:r.reverse()}
+function smooth(v,amp=9){const w=[];v.forEach((a,i)=>{w.push(a,...(amp?edge(a,v[(i+1)%v.length],amp):[]))});
+ const n=w.length,f=x=>x.toFixed(1);let d=`M${f(w[0][0])},${f(w[0][1])}`;
+ for(let i=0;i<n;i++){const p0=w[(i-1+n)%n],p1=w[i],p2=w[(i+1)%n],p3=w[(i+2)%n];
+  d+=`C${f(p1[0]+(p2[0]-p0[0])/6)},${f(p1[1]+(p2[1]-p0[1])/6)} ${f(p2[0]-(p3[0]-p1[0])/6)},${f(p2[1]-(p3[1]-p1[1])/6)} ${f(p2[0])},${f(p2[1])}`}return d+"Z"}
+const mk=(par,tag,at)=>{const e=document.createElementNS(ns,tag);for(const k in at)e.setAttribute(k,at[k]);par.append(e);return e};
+const seaD=smooth(P("300,-10 270,40 400,70 420,170 475,235 460,310 490,400 515,520 535,640 440,665 600,720 610,-10"),0);
+$("sea").setAttribute("d",seaD);$("seaC").setAttribute("d",seaD);
+["norte","noroeste","centro","oeste","sudoeste","sul"].forEach(k=>{const z=Z[k],d=smooth(P(z.p));
+ mk($("shadows"),"path",{d,fill:"#000",transform:"translate(10,22)"});
+ mk($("glow"),"path",{d,fill:"var(--s1)",stroke:"var(--s1)","stroke-width":34});
+ const g=mk($("zones"),"g",{class:"zg",tabindex:0,role:"button","aria-label":`${z.n}, ${cnt(k)} câmeras`});g.style.setProperty("--zc",`var(--c-${k})`);
+ ["side","top","hl"].forEach(c=>mk(g,"path",{d,class:c}));
+ const t=mk($("labels"),"text",{class:"lbl",x:z.l[0],y:z.l[1]});t.textContent=z.n;
+ const c=mk($("labels"),"text",{class:"cnt",x:z.l[0],y:z.l[1]+18});c.textContent=cnt(k)+" câmeras";
+ g.onclick=()=>tog(k);g.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog(k)}};
+ z.t=t;z.c=c;z.p_=g});
+[...Object.keys(Z),"indeterminado"].forEach(k=>{const b=document.createElement("button");b.className="chip";b.dataset.k=k;b.style.setProperty("--zc",`var(--c-${k})`);
+ b.innerHTML=`<i></i>${(Z[k]||IND).n} <span style="opacity:.7">${cnt(k)}</span>`;b.onclick=()=>tog(k);chips.append(b)});
+function tog(k){sel.has(k)?sel.delete(k):sel.add(k);draw()}
+all.onclick=()=>{Object.keys(DATA).forEach(k=>sel.add(k));draw()};none.onclick=()=>{sel.clear();draw()};q.oninput=draw;
+function draw(){
+ Object.entries(Z).forEach(([k,z])=>{const on=sel.has(k);z.p_.classList.toggle("on",on);z.t.classList.toggle("on",on);z.c.classList.toggle("on",on);z.p_.setAttribute("aria-pressed",on)});
+ chips.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",sel.has(b.dataset.k)));
+ const ks=[...sel],one=ks.length===1?(Z[ks[0]]||IND):null,term=q.value.trim().toLowerCase();
+ let rows=[];ks.forEach(k=>Object.entries(DATA[k]).forEach(([n,id])=>rows.push([k,n,id])));
+ rows=rows.filter(r=>!term||nm(r[1]).toLowerCase().includes(term)||String(r[2]).includes(term)).sort((a,b)=>a[2]-b[2]);
+ t.textContent=ks.length===0?"Nenhuma zona selecionada":one?one.n:`${ks.length} zonas selecionadas`;
+ s.textContent=ks.length===0?"Clique em uma região do mapa.":`${one?one.rpa+" · ":""}${rows.length} câmera${rows.length===1?"":"s"}`;
+ b.textContent=one?one.b:ks.map(k=>(Z[k]||IND).n).join(", ");
+ l.innerHTML=rows.length?rows.map(r=>`<li style="--zc:var(--c-${r[0]})"><i></i><b>${nm(r[1])}</b><code>${r[2]}</code></li>`).join(""):`<li class="empty" style="display:block;border:0">Nenhuma câmera para mostrar.</li>`}
+draw();
+</script></body></html>

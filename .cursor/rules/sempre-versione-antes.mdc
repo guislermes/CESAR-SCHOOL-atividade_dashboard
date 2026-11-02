@@ -1,0 +1,33 @@
+---
+description: Sempre versionar projeto/layout/render ANTES de qualquer alteracao
+alwaysApply: true
+---
+
+# Sempre versione antes de mexer
+
+**Primeiro passo obrigatorio** de qualquer pedido que altere cena, shader, emissor, camera, render ou blend: **versionar**. So depois mexer.
+
+## O que versionar
+- Projeto: `stage_0020_blender/projects/dolphin_v0NN.blend` → copiar/salvar como **proximo** `v0NN+1` (nunca sobrescrever o atual como base de trabalho).
+- Layout/proxy e render: saidas com sufixo `_v0NN` novo. **Nao** apagar nem sobrescrever versoes anteriores.
+- Scripts de cook/setup: `_cook_v0NN.py` / `_setup_v0NN.py` alinhados ao numero da versao.
+
+## Ordem
+1. Identificar versao atual (ex.: `dolphin_v018.blend`).
+2. Criar **v019** (blend + paths de saida).
+3. So entao aplicar as mudancas pedidas em cima da versao nova.
+4. Preview/cook grava na versao nova.
+
+## Nao fazer
+- Abrir o `.blend` atual e editar in-place sem bump de versao.
+- Reusar pasta/arquivo `_v0NN` ja existente para uma mudanca nova.
+- Pular versionamento porque a mudanca “e pequena”.
+
+## Exemplo
+
+```text
+Pedido: "desaturar shader e desligar chao"
+# 1) dolphin_v018.blend → save_as dolphin_v019.blend
+# 2) saidas …_v019.png / dolphin_v001_render_v019/
+# 3) ai sim: shader + chao off no v019
+```

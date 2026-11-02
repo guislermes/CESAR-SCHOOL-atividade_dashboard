@@ -1,0 +1,311 @@
+/* v005 — mapa flush no topo + zona: mapa centro + roll horizontal (nav LOCK) */
+
+:root {
+  --bg: #eef3f2;
+  --panel: rgba(255, 255, 255, 0.92);
+  --ink: #0f2a36;
+  --mute: #5b7480;
+  --line: #cfdcdd;
+  --inland: #bfd0c6;
+  --s1: #8ad3d4;
+  --s2: #2f8aae;
+  --s3: #0c3a66;
+  --idle: #e9f0eb;
+  --accent: #2c7a9b;
+  --glass-blur: 16px;
+  --radius: 22px;
+  --shadow: 0 12px 40px rgba(15, 42, 54, 0.12);
+  --c-centro: #c2503a;
+  --c-norte: #2c7a9b;
+  --c-noroeste: #5b8c3e;
+  --c-oeste: #8a5db0;
+  --c-sudoeste: #d79a1e;
+  --c-sul: #1f9e8a;
+  --c-indeterminado: #7c8b93;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* brand flutuante — mapa encosta no topo do iframe */
+.app-bar {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.brand .pin {
+  width: 22px;
+  height: 22px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--accent);
+  transform: rotate(-45deg);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.brand .pin::after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  margin: 7px auto;
+  transform: rotate(45deg);
+}
+
+.brand h1 {
+  margin: 0;
+  font-family: Fraunces, Georgia, serif;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.brand .sub {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--mute);
+}
+
+.top-pill {
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.top-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-norte);
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.map-card {
+  position: relative;
+  background: var(--inland);
+  border-radius: 0;
+  border: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  height: 100%;
+}
+
+.map-card svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.map-note {
+  position: absolute;
+  left: 12px;
+  bottom: 8px;
+  font-size: 11px;
+  color: var(--mute);
+  pointer-events: none;
+}
+
+.map-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--mute);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* --- zonas (nav LOCK: data-zona + component) --- */
+.zg {
+  cursor: pointer;
+  --top: var(--idle);
+  --side: color-mix(in srgb, var(--idle) 58%, #000);
+}
+
+.zg.is-active {
+  --top: var(--zc);
+  --side: color-mix(in srgb, var(--zc) 48%, #000);
+}
+
+.zg:hover {
+  --top: color-mix(in srgb, var(--zc) 28%, var(--idle));
+}
+
+.zg.is-active:hover {
+  --top: var(--zc);
+}
+
+.zg .side {
+  fill: var(--side);
+  stroke: var(--side);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform: translateY(7px);
+  transition: transform 0.3s, fill 0.3s;
+}
+
+.zg.is-active .side {
+  transform: translateY(15px);
+}
+
+.zg .top {
+  fill: var(--top);
+  stroke: color-mix(in srgb, var(--top) 70%, #fff);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  transition: fill 0.3s, transform 0.3s;
+}
+
+.zg .hl {
+  fill: url(#hl);
+  pointer-events: none;
+  transition: transform 0.3s;
+}
+
+.zg.is-active .top,
+.zg.is-active .hl {
+  transform: translateY(-6px);
+}
+
+.zg:focus-visible .top {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.zone-label {
+  font: 700 15px Fraunces, Georgia, serif;
+  fill: var(--ink);
+  pointer-events: none;
+  text-anchor: middle;
+  transition: transform 0.3s, fill 0.3s;
+}
+
+.zone-count {
+  font: 500 12px "Instrument Sans", system-ui, sans-serif;
+  fill: var(--mute);
+  pointer-events: none;
+  text-anchor: middle;
+  transition: transform 0.3s, fill 0.3s;
+}
+
+.labels .zone-label.is-active {
+  fill: #fff;
+  transform: translateY(-6px);
+}
+
+.labels .zone-count.is-active {
+  fill: #ffffffd0;
+  transform: translateY(-6px);
+}
+
+.sea-txt {
+  font: italic 500 15px Fraunces, Georgia, serif;
+  fill: #fff;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.viewport.map-only {
+  min-height: 0;
+  height: 100%;
+}
+
+.viewport.map-only .stage {
+  grid-template-columns: 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.viewport.map-only .map-card {
+  height: 100%;
+}
+
+@media (max-width: 860px) {
+  .map-hint {
+    white-space: normal;
+    max-width: 90%;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,22 @@
+---
+description: So altere o que o usuario pediu explicitamente; nao expandir escopo
+alwaysApply: true
+---
+
+# So mexa no que eu peco
+
+- Altere **somente** o que o pedido atual pede. Nao "melhorar", limpar, refatorar nem reorganizar o resto.
+- Se o pedido disser **APENAS** / **nao mexa** / **lock** em X: X fica intocado. Zero excecao.
+- Nao reverter locks (`*_LOCK*.png`, baselines) sem pedido explicito.
+- Nao mudar camera, emissor, material, resolucao, spread, orientacao ou frame se nao foi citado.
+- Em duvida: pergunte antes. Nao invente passo extra.
+- Render/proxy novo: **adicione** arquivo versionado (`_v00N`). Nao apague views antigos.
+- Headless Blender para render pesado. Nao derrubar MCP a toa.
+
+## Exemplo
+
+```text
+Pedido: "apenas mexa no spread do main"
+# OK: factor_random / emit width do main
+# NAO: trouble, camera, count, orientacao, chao
+```

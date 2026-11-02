@@ -1,0 +1,100 @@
+/* Trânsito Recife — layout ref (gemini). Tons claros, sidebar glass, cards. */
+
+:root {
+  --bg-0: #f5f7fa;
+  --bg-1: #e4ecf5;
+  --text: #1e3c72;
+  --muted: #64748b;
+  --card: #ffffff;
+  --accent: #007bff;
+  --accent-glow: #00d2ff;
+  --radius: 12px;
+  --shadow: 0 4px 15px rgba(0, 123, 255, 0.08);
+}
+
+html,
+body {
+  margin: 0;
+  font-family: Inter, "DM Sans", system-ui, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg-0) 0%, var(--bg-1) 100%);
+  min-height: 100%;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1.25rem 1rem;
+  overflow-y: auto;
+}
+
+.app-main {
+  padding: 1.25rem 1.5rem;
+  min-width: 0;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.app-sub {
+  margin: 0.25rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.camera-card {
+  background: var(--card);
+  padding: 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  transition: transform 0.2s ease;
+}
+
+.camera-card:hover {
+  transform: translateY(-2px);
+}
+
+.camera-card b {
+  color: #334155;
+  font-size: 13px;
+}
+
+.camera-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+  display: block;
+}
+
+.map-title {
+  margin: 0 0 0.25rem;
+  color: var(--text);
+}
+
+.map-sub {
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .app-sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    max-height: 45vh;
+  }
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trânsito Recife — Monitoramento</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <h1 class="app-title">Trânsito Recife</h1>
+        <p class="app-sub">Monitoramento em Tempo Real</p>
+        <label for="regiao">Selecione a Região</label>
+        <select id="regiao">
+          <option>Norte</option>
+          <option>Centro</option>
+          <option>Nordeste</option>
+          <option>Oeste</option>
+          <option>Sudoeste</option>
+          <option>Sul</option>
+          <option>Outras</option>
+        </select>
+        <h3>Câmeras ao Vivo</h3>
+        <div class="camera-card">
+          <b>Exemplo — Av. Norte</b>
+          <img src="../../camera_error_v001.jpg" alt="placeholder" />
+        </div>
+      </aside>
+      <main class="app-main">
+        <h2 class="map-title">Mapa Interativo de Recife</h2>
+        <p class="map-sub">
+          Selecione a zona no mapa ou explore as áreas. Streamlit injeta Folium
+          aqui.
+        </p>
+        <div id="map-slot"><!-- folium / streamlit --></div>
+        <div id="feed-slot"><!-- vision feed --></div>
+      </main>
+    </div>
+  </body>
+</html>

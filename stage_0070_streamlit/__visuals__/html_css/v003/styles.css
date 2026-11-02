@@ -1,0 +1,349 @@
+/* ref_app.jpg — mapa fullscreen + painel glass + rail ícones */
+
+:root {
+  --text: #1e3c72;
+  --muted: #64748b;
+  --accent: #00bcd4;
+  --accent-deep: #0097a7;
+  --glass: rgba(255, 255, 255, 0.88);
+  --shadow: 0 12px 40px rgba(30, 60, 114, 0.12);
+  --radius: 18px;
+  --rail-w: 56px;
+  --panel-w: 340px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: #e8eef5;
+  overflow: hidden;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 680px;
+  overflow: hidden;
+}
+
+/* --- mapa fundo (menor / meet = cidade inteira visível) --- */
+.map-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 24px calc(var(--rail-w) + 24px);
+  background: linear-gradient(160deg, #eef3f8 0%, #dfe9f2 100%);
+}
+
+.map-layer svg {
+  width: min(100%, 640px);
+  height: auto;
+  max-height: calc(100% - 72px);
+  display: block;
+}
+
+/* com painel aberto: mapa cabe na faixa esquerda */
+.viewport.has-panel .map-layer {
+  padding-right: calc(var(--panel-w) + 36px);
+}
+
+.viewport.has-panel .map-layer svg {
+  width: min(100%, 560px);
+}
+
+.zone-hit {
+  cursor: pointer;
+  outline: none;
+}
+
+.zone-poly {
+  cursor: pointer;
+  fill-opacity: 0.34;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 12px rgba(0, 188, 212, 0.4));
+  transition: fill-opacity 0.2s ease, filter 0.2s ease, stroke-width 0.2s ease;
+  pointer-events: all;
+}
+
+.zone-hit:hover .zone-poly,
+.zone-poly.is-active {
+  fill-opacity: 0.55;
+  filter: drop-shadow(0 0 18px rgba(0, 188, 212, 0.6));
+  stroke-width: 3.5;
+}
+
+.map-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.zone-label {
+  pointer-events: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  fill: #1e3c72;
+  opacity: 0.85;
+}
+
+.cam-pin {
+  pointer-events: none;
+}
+
+/* --- rail ícones --- */
+.icon-rail {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--rail-w);
+  padding: 14px 0;
+  border-radius: 16px;
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  z-index: 20;
+}
+
+.icon-rail span {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid #94a3b8;
+  opacity: 0.7;
+  display: block;
+}
+
+/* --- pill topo --- */
+.top-pill {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border-radius: 999px;
+  padding: 10px 18px;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.top-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* --- painel glass --- */
+.glass-panel {
+  position: absolute;
+  left: calc(var(--rail-w) + 28px);
+  top: 18px;
+  bottom: 18px;
+  width: var(--panel-w);
+  z-index: 25;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.glass-panel .brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.glass-panel .pin {
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--accent);
+  transform: rotate(-45deg);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.glass-panel .pin::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  margin: 9px auto;
+  transform: rotate(45deg);
+}
+
+.glass-panel h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.glass-panel .sub {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.glass-panel label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.list-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+.cam-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.cam-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.cam-card:hover {
+  transform: translateY(-2px);
+}
+
+.cam-card .label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.75), transparent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.cam-card .frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #1e293b;
+}
+
+.cam-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.empty {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.pager-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.pager-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.pager-dot.is-active {
+  background: var(--accent-deep);
+  transform: scale(1.25);
+}
+
+.pager-dot:hover {
+  background: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .icon-rail {
+    display: none;
+  }
+
+  .glass-panel {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: auto;
+    bottom: 0;
+    height: 46vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .top-pill {
+    left: 12px;
+    right: 12px;
+    transform: none;
+    justify-content: center;
+  }
+}

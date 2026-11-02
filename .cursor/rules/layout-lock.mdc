@@ -1,0 +1,45 @@
+---
+description: LOCK diagramação HOME + MULTICAM Streamlit — não mexer sem pedido explícito
+alwaysApply: true
+---
+
+# Layout LOCK (HOME + MULTICAM)
+
+**Status: LOCK.** Diagramação atual congelada até o usuário pedir unlock / "pode mexer no layout".
+
+## HOME (html_css v029 + map component)
+
+- Rail esquerdo: brand (Trânsito Recife) + Sobre o projeto
+- Direita: mapa SVG `meet` (todas as zonas), fundo degradê azul, sem inland verde, sem label Oceano Atlântico
+- Clique/geo zona = LOCK
+- Arquivos: `node_003_visuals.py` (`build_map_html` / `map_svg_inner`), `__visuals__/html_css/v029/`
+
+## MULTICAM (Streamlit nativo)
+
+- Rail esquerdo: Voltar + título/sub da zona + status (`st.container(border=True)`)
+- Frame direita: quadro branco de status + grade 3×3 + pager no rodapé (slot do hint)
+- Fundo `STYLE_BG`; texto `STYLE_MULTICAM_TEXT`
+- Pipeline LOCK: fetch JPEG async → pinta cru → YOLO → pinta anotado
+- Status LOCK (rail **e** quadro branco, mesmos knobs):
+  - enquanto fetch: `STYLE_FETCH_LOADING` ↔ `STYLE_FETCH_CONTACTING` a cada `STYLE_FETCH_STATUS_INTERVAL_S`
+  - fetch ok → `STYLE_FETCH_CONNECTED`
+  - YOLO → `STYLE_DETECT_LOADING` → `STYLE_DETECT_DONE` (banner some no fim)
+- Knobs: `stage_0010_globals/node_003_globals.py`
+- Arquivos: `node_004_layout.py` (`_view_zone` / `_render_cam_grid` / `_render_pager`), chrome em `streamlit_chrome_css`
+- Widget `node_002_widget_cameras.py`: não reescrever o fluxo sem pedido (layout orquestra fases)
+
+## Proibido sem pedido explícito
+
+- Trocar rail/frame, colunas, pager de lugar
+- Tirar/mover quadro branco de status ou status do rail
+- Voltar brand/pill a flutuar no mapa
+- `slice` no SVG da home / cortar zonas
+- Refatorar shell HTML/CSS de layout “pra melhorar”
+- Apagar locks ou baseline visual
+- Fundir de novo fetch+YOLO num único passo sem status intermediário
+
+## Permitido sem unlock
+
+- Bugs que não mudam diagramação (fetch 429, vision)
+- Ajuste de **texto** dos knobs `STYLE_FETCH_*` / `STYLE_DETECT_*` / interval em globals
+- Versionar só se o usuário pedir mudança visual

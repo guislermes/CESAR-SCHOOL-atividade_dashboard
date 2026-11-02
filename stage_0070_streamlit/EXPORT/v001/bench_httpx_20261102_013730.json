@@ -1,0 +1,74 @@
+{
+  "stamp": "20261102_013730",
+  "globals_gap": 0.35,
+  "globals_workers": 9,
+  "globals_retries": 2,
+  "rows": [
+    {
+      "gap_s": 0.0,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 14.63,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 8.948
+    },
+    {
+      "gap_s": 0.05,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 1.953,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.532
+    },
+    {
+      "gap_s": 0.1,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 2.192,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.418
+    },
+    {
+      "gap_s": 0.2,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 3.113,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.341
+    },
+    {
+      "gap_s": 0.35,
+      "workers": 9,
+      "n_urls": 9,
+      "wall_s": 4.829,
+      "ok": 7,
+      "http_429": 2,
+      "other_err": 0,
+      "bytes_ok": 318059,
+      "mean_ok_s": 0.29
+    }
+  ],
+  "best": {
+    "gap_s": 0.05,
+    "workers": 9,
+    "n_urls": 9,
+    "wall_s": 1.953,
+    "ok": 7,
+    "http_429": 2,
+    "other_err": 0,
+    "bytes_ok": 318059,
+    "mean_ok_s": 0.532
+  }
+}

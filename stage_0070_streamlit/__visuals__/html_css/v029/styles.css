@@ -1,0 +1,406 @@
+/* v029 — rail + zonas; fundo só degradê azul (sem inland verde / sem label oceano) */
+
+:root {
+  --bg: #eef3f2;
+  --panel: rgba(255, 255, 255, 0.92);
+  --ink: #0f2a36;
+  --mute: #5b7480;
+  --line: #cfdcdd;
+  --inland: #bfd0c6;
+  --s1: #8ad3d4;
+  --s2: #2f8aae;
+  --s3: #0c3a66;
+  --idle: #e9f0eb;
+  --accent: #2c7a9b;
+  --glass-blur: 14px;
+  --radius: 16px;
+  --shadow: 0 10px 28px rgba(15, 42, 54, 0.12);
+  --rail-width: 252px;
+  --c-centro: #c2503a;
+  --c-norte: #2c7a9b;
+  --c-noroeste: #5b8c3e;
+  --c-oeste: #8a5db0;
+  --c-sudoeste: #d79a1e;
+  --c-sul: #1f9e8a;
+  --c-indeterminado: #7c8b93;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* esquerda: widgets | direita: mapa hero (todas as zonas) */
+.stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: var(--rail-width, 252px) minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* container vertical: Trânsito Recife + Sobre o projeto */
+.side-rail {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2;
+}
+
+.brand {
+  font-size: calc(16px * var(--brand-scale, 1));
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.55em 0.65em;
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  width: 100%;
+  max-width: none;
+  flex-shrink: 0;
+}
+
+.brand .pin {
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 50% 50% 50% 0;
+  background: var(--accent);
+  transform: rotate(-45deg);
+  margin-top: 0.15em;
+  flex-shrink: 0;
+}
+
+.brand .pin::after {
+  content: "";
+  display: block;
+  width: 0.38em;
+  height: 0.38em;
+  background: #fff;
+  border-radius: 50%;
+  margin: 0.38em auto;
+  transform: rotate(45deg);
+}
+
+.brand-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-display, Helvetica, Arial, sans-serif);
+  font-weight: var(--font-weight-title, 700);
+  font-size: 1.05em;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.brand .sub {
+  margin: 0.08em 0 0;
+  font-family: var(--font-ui, Helvetica, Arial, sans-serif);
+  font-weight: var(--font-weight-ui, 400);
+  font-size: 0.65em;
+  color: var(--mute);
+}
+
+.brand-stats {
+  display: flex;
+  gap: 0.4em;
+  margin-top: 0.45em;
+  width: 100%;
+}
+
+.brand-stat {
+  flex: 1;
+  min-width: 0;
+  background: var(--idle, #e9f0eb);
+  border: 1px solid var(--line);
+  border-radius: 0.5em;
+  padding: 0.28em 0.4em;
+  text-align: center;
+}
+
+.brand-stat .lbl {
+  margin: 0;
+  font-size: 0.55em;
+  color: var(--mute);
+  font-family: var(--font-ui, Helvetica, Arial, sans-serif);
+  font-weight: var(--font-weight-ui, 400);
+  line-height: 1.1;
+}
+
+.brand-stat .val {
+  margin: 0.12em 0 0;
+  font-family: var(--font-display, Helvetica, Arial, sans-serif);
+  font-size: 0.75em;
+  color: var(--ink);
+  font-weight: var(--font-weight-title, 700);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.about-panel {
+  flex: 1;
+  min-height: 0;
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  padding: 16px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-panel h2 {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-display, Helvetica, Arial, sans-serif);
+  font-weight: var(--font-weight-title, 700);
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.about-panel .about-body {
+  margin: 0;
+  font-family: var(--font-ui, Helvetica, Arial, sans-serif);
+  font-weight: var(--font-weight-ui, 400);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mute);
+  white-space: pre-line;
+}
+
+.map-card {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  /* letterbox = mar (não inland verde cortando o oceano) */
+  background:
+    radial-gradient(
+      120% 80% at 78% 42%,
+      var(--s1) 0%,
+      var(--s2) 42%,
+      var(--s3) 100%
+    );
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+}
+
+/* meet: mapa inteiro — Norte/Sul/Centro/Oeste/… todos clicáveis */
+.map-card > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.map-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      90% 75% at 55% 45%,
+      transparent 45%,
+      rgba(12, 58, 102, 0.12) 100%
+    );
+}
+
+.map-note {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  font-size: 10px;
+  color: var(--mute);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.map-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: var(--panel);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  border: 1px solid var(--line);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--mute);
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100% - 24px);
+}
+
+.zg {
+  cursor: pointer;
+  --top: var(--idle);
+  --side: color-mix(in srgb, var(--idle) 58%, #000);
+}
+
+.zg.is-active {
+  --top: var(--zc);
+  --side: color-mix(in srgb, var(--zc) 48%, #000);
+}
+
+.zg:hover {
+  --top: color-mix(in srgb, var(--zc) 28%, var(--idle));
+}
+
+.zg.is-active:hover {
+  --top: var(--zc);
+}
+
+.zg .side {
+  fill: var(--side);
+  stroke: var(--side);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform: translateY(5px);
+  transition: transform 0.25s, fill 0.25s;
+}
+
+.zg.is-active .side {
+  transform: translateY(10px);
+}
+
+.zg .top {
+  fill: var(--top);
+  stroke: color-mix(in srgb, var(--top) 70%, #fff);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  transition: fill 0.25s, transform 0.25s;
+}
+
+.zg .hl {
+  fill: url(#hl);
+  pointer-events: none;
+  transition: transform 0.25s;
+}
+
+.zg.is-active .top,
+.zg.is-active .hl {
+  transform: translateY(-4px);
+}
+
+.zg:focus-visible .top {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.zone-label {
+  font: 700 13px Fraunces, Georgia, serif;
+  fill: var(--ink);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.zone-count {
+  font: 500 10px "Instrument Sans", system-ui, sans-serif;
+  fill: var(--mute);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.labels .zone-label.is-active {
+  fill: #fff;
+  transform: translateY(-4px);
+}
+
+.labels .zone-count.is-active {
+  fill: #ffffffd0;
+  transform: translateY(-4px);
+}
+
+.sea-txt {
+  font: italic 500 12px Fraunces, Georgia, serif;
+  fill: #fff;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .side-rail {
+    height: auto;
+    max-height: 42%;
+  }
+
+  .about-panel {
+    max-height: 140px;
+  }
+
+  .map-hint {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

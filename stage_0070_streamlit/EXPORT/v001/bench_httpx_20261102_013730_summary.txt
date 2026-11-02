@@ -1,0 +1,13 @@
+bench httpx async — 20261102_013730
+globals: GAP=0.35 WORKERS=9
+
+   gap   w    wall  ok  429 err  mean_ok
+------------------------------------------------
+  0.00   9   14.63   7    2   0     8.95
+  0.05   9    1.95   7    2   0     0.53
+  0.10   9    2.19   7    2   0     0.42
+  0.20   9    3.11   7    2   0     0.34
+  0.35   9    4.83   7    2   0     0.29
+
+BEST → gap=0.05 workers=9 wall=1.953s ok=7/9 429=2
+sugerido: SNAPSHOT_FETCH_GAP_S = 0.05  # STYLE_MULTICAM_WORKERS = 9
